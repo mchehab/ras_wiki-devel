@@ -1,5 +1,5 @@
-Error injection using QEMU
-==========================
+Firmware error injection using QEMU
+===================================
 
 Setting up an error injection environment on QEMU using firmware-first mode is not hard. Basically, it requires QMP support at QEMU level to do the error injection.
 
