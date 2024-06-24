@@ -47,7 +47,7 @@ Executing QEMU can be done with::
    	-m 4g,maxmem=8G,slots=8 \
    	-drive if=none,file=$DIR/debian.qcow2,format=qcow2,id=hd \
    	-bios $DIR/QEMU_EFI.fd -object memory-backend-ram,size=4G,id=mem0 \
-   	-kernel $KERNEL//arch/arm64/boot/Image.gz \
+   	-kernel $KERNEL/arch/arm64/boot/Image.gz \
    	-cpu max -smp 4 \
    	-device pcie-root-port,id=root_port1 \
    	-netdev type=user,id=mynet,hostfwd=tcp::5555-:22 \
