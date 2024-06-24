@@ -3,8 +3,20 @@ UEFI CPER events
 
 The UEFI BIOS spec defines Common Platform Error Record (CPER) events for the firmware to report errors from different kinds of hardware.
 
-CPER processor events
----------------------
+There are several types of CPER events:
+
+N.2.4: `CPER processor error`_
+N.2.5: `CPER Memory error`_
+N.2.6: `CPER `_
+N.2.7: `CPER `_
+N.2.8: `CPER `_
+N.2.9: `CPER `_
+N.2.3: `CPER Non-standard`_
+
+CPER processor error
+--------------------
+
+Defined at `Processor Error Sections <https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#processor-error-sections`_.
 
 Currently, UEFI 2.6+ BIOS supports 4 types of processors:
 
@@ -16,6 +28,11 @@ Currently, UEFI 2.6+ BIOS supports 4 types of processors:
 Each processor type has a different error event.
 
 It should be noticed that ARM events were added on UEFI version 2.6. Yet, one of the fields there was lacking encoding information. Such encoding info was added on UEFI 2.9A errata.
+
+CPER memory error
+-----------------
+
+Defined at `<https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#memory-error-section>`_.
 
 Hardware error injection
 ========================
