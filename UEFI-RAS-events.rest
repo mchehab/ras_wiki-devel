@@ -1,53 +1,53 @@
 UEFI CPER events
 ================
 
-The UEFI BIOS spec defines Common Platform Error Record (CPER) for the firmware to report errors from different kinds of hardware.
+The UEFI BIOS on Annex N (present at the spec since its version 2.1) the Common Platform Error Record (CPER) for the firmware to report errors from different kinds of hardware.
 
 There are several types of CPER events for different types of hardware:
 
-#. CPU:
+#. CPU (UEFI 2.1, extended on UEFI 2.6 to add ARM):
 
    - N.2.4: `Processor <https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#processor-error-sections>`_
 
-     Currently, UEFI 2.6+ BIOS supports 4 types of processors:
+     Currently, UEFI BIOS supports 4 types of processors:
 
-     - `Generic Processor <https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#generic-processor-error-section>`_;
-     - `IA32/X64 processor (x86 architecture) <https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#ia32-x64-processor-error-section>`_;
-     - `IA64 processor (Itanium) <https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#ia64-processor-error-section>`_;
-     - `ARM processor <https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#arm-processor-error-section>`_.
+     - `Generic Processor <https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#generic-processor-error-section>`_ (UEFI 2.1);
+     - `IA32/X64 processor (x86 architecture) <https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#ia32-x64-processor-error-section>`_ (UEFI 2.1);
+     - `IA64 processor (Itanium) <https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#ia64-processor-error-section>`_ (UEFI 2.1);
+     - `ARM processor <https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#arm-processor-error-section>`_ (UEFI 2.6 and upper).
 
      Each processor type has a different error event.
 
      It be noticed that, while ARM was added on UEFI v 2.6, the encoding of the error type was only specified on UEFI 2.9A errata.
 
-#. Memory:
+#. Memory (UEFI 2.1, extended on UEFI 2.5):
 
-   - N.2.5: `Memory error <https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#memory-error-section>`_
-   - N.2.6: `Memory error 2 <https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#memory-error-section-2>`_
+   - N.2.5: `Memory error <https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#memory-error-section>`_ (UEFI v2.1);
+   - N.2.6: `Memory error 2 <https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#memory-error-section-2>`_ (UEFI 2.5).
 
-#. PCI/PCIe:
+#. PCI/PCIe (UEFI v2.1):
 
    - N.2.7: `PCI express <https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#pci-express-error-section>`_
    - N.2.8: `PCI/PCI-X bus <https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#pci-pci-x-bus-error-section>`_
    - N.2.9: `PCI/PCI-X component <https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#pci-pci-x-component-error-section>`_
 
-#. Firmware:
+#. Firmware (UEFI v2.1):
 
    - N2.10: `Firmware <https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#firmware-error-record-reference>`_
 
-#. DMA:
+#. DMA (UEFI v2.2):
 
    - N2.11: `DMA <https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#dmar-error-sections>`_
 
-#. Cache Coherent Interconnect (CCIX):
+#. Cache Coherent Interconnect - CCIX (UEFI 2.8):
 
    - N2.12: `CCIX PER log <https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#ccix-per-log-error-section>`_.
 
-#. Compute Express Link
+#. Compute Express Link (UEFI 2.9):
 
    - N2.13: `Compute Express Link (CXL) protocol <https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#compute-express-link-cxl-protocol-error-section>`_.
 
-#. Others:
+#. Others (UEFI 2.1):
 
    - N.2.3: `Non-standard <https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#non-standard-section-body>`_.
 
