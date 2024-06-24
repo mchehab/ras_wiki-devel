@@ -3,15 +3,42 @@ UEFI CPER events
 
 The UEFI BIOS spec defines Common Platform Error Record (CPER) events for the firmware to report errors from different kinds of hardware.
 
-There are several types of CPER events:
+There are several types of CPER events for different types of hardware:
 
-N.2.4: `CPER processor error`_
-N.2.5: `CPER Memory error`_
-N.2.6: `CPER `_
-N.2.7: `CPER `_
-N.2.8: `CPER `_
-N.2.9: `CPER `_
-N.2.3: `CPER Non-standard`_
+#. CPU:
+
+   - N.2.4: `Processor <https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#processor-error-sections>`_
+
+#. Memory:
+
+   - N.2.5: `Memory error <https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#memory-error-section>`_
+   - N.2.6: `Memory error 2 <https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#memory-error-section-2>`_
+
+#. PCI/PCIe:
+
+   - N.2.7: `PCI express <https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#pci-express-error-section>`_
+   - N.2.8: `PCI/PCI-X bus <https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#pci-pci-x-bus-error-section>`_
+   - N.2.9: `PCI/PCI-X component <https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#pci-pci-x-component-error-section>`_
+
+#. Firmware:
+
+   - N2.10: `Firmware <https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#firmware-error-record-reference>`_
+
+#. DMA:
+
+   - N2.11: `DMA <https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#dmar-error-sections>`_
+
+#. Cache Coherent Interconnect (CCIX):
+
+   - N2.12: `CCIX PER log <https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#ccix-per-log-error-section>`_.
+
+#. Compute Express Link
+
+   - N2.13: `Compute Express Link (CXL) protocol <https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#compute-express-link-cxl-protocol-error-section>`_.
+
+#. Others:
+
+   - N.2.3: `Non-standard <https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#non-standard-section-body>`_.
 
 CPER processor error
 --------------------
