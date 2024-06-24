@@ -1,1 +1,0 @@
-Those tools provide a way to get Platform Reliability, Availability and Serviceability (RAS) reports made via the Kernel tracing events.
