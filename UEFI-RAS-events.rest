@@ -55,8 +55,3 @@ Currently, UEFI 2.6+ BIOS supports 4 types of processors:
 Each processor type has a different error event.
 
 It should be noticed that ARM events were added on UEFI version 2.6. Yet, one of the fields there was lacking encoding information. Such encoding info was added on UEFI 2.9A errata.
-
-CPER memory error
------------------
-
-Defined at `<https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#memory-error-section>`_.
