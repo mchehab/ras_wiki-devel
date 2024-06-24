@@ -1,0 +1,88 @@
+Hardware error injection
+========================
+
+Some machines can optionally do hardware/firmware error injection. This is usually done by setting up some special features at the BIOS level to enable EINJ features. Those are hardware-specific and may require special BIOS used on hardware development by OEM vendors.
+
+Error injection using QEMU
+==========================
+
+Setting up an error injection environment on QEMU using firmware-first mode is not hard. Basically, it requires QMP support at QEMU level to do the error injection. Currently, UEFI 2.6+ BIOS supports 4 types of processors:
+
+- Generic processor;
+- x86 processor;
+- IA64 processor;
+- ARM processor.
+
+Each processor type has a different error event.
+
+ARM processor QEMU error injection
+==================================
+
+There's a QEMU patch adding support for error-injection at: 
+https://lore.kernel.org/all/20240621165115.336-1-shiju.jose@huawei.com/
+
+Compiling QEMU with such patch on it adds a QMP extension to error injection compatible with UAPI 2.9A errata.
+Such patch should be applied at QEMU git tree. Both QEMU and UEFI firmware should be build from QEMU and EK2 trees.
+
+An arm64 image is also required for QEMU to run.
+
+In order to test it, Linux kernel should be built for ARM64 on its default config, plus with RAS features enabled, e. g.::
+
+  make defconfig
+  ./scripts/config  -e CONFIG_FTRACE -e CONFIG_FTRACE_SYSCALLS -e CONFIG_TRACEPOINTS -e CONFIG_TRACING -e CONFIG_ENABLE_DEFAULT_TRACERS
+ -e CONFIG_FUNCTION_TRACER -e CONFIG_BRANCH_PROFILE_NONE -e CONFIG_PROBE_EVENTS -e CONFIG_TRACEPOINT_BENCHMARK -e CONFIG_STACK_TRACER
+  make olddefconfig
+  make all
+
+Executing QEMU can be done with::
+
+   #!/bin/bash -e
+   
+   KERNEL=$HOME/location-of-the-kernel
+   QEMU_DIR=$HOME/location-of-qemu-build
+   DIR=$HOME/location-of-qemu-image-and-firmware
+   
+   $QEMU_DIR/qemu-system-aarch64 \
+   	-M virt,nvdimm=on,gic-version=3,cxl=on \
+   	-m 4g,maxmem=8G,slots=8 \
+   	-drive if=none,file=$DIR/debian.qcow2,format=qcow2,id=hd \
+   	-bios $DIR/QEMU_EFI.fd -object memory-backend-ram,size=4G,id=mem0 \
+   	-kernel $KERNEL//arch/arm64/boot/Image.gz \
+   	-cpu max -smp 4 \
+   	-device pcie-root-port,id=root_port1 \
+   	-netdev type=user,id=mynet,hostfwd=tcp::5555-:22 \
+   	-device virtio-net-pci,netdev=mynet,id=bob -nographic -no-reboot \
+   	-device virtio-blk-pci,drive=hd \
+   	-qmp tcp:localhost:4445,server=on,wait=off \
+   	-append 'earlycon root=/dev/vda1 fsck.mode=skip tp_printk maxcpus=4' -monitor telnet:127.0.0.1:1234,server,nowait \
+   	-numa node,nodeid=0,cpus=0-3,memdev=mem0 \
+   	-object memory-backend-file,id=cxl-mem1,share=on,mem-path=/tmp/cxltest.raw,size=256M,align=256M \
+   	-object memory-backend-file,id=cxl-mem2,share=on,mem-path=/tmp/cxltest2.raw,size=256M,align=256M \
+   	-object memory-backend-file,id=cxl-mem3,share=on,mem-path=/tmp/cxltest3.raw,size=256M,align=256M \
+   	-object memory-backend-file,id=cxl-mem4,share=on,mem-path=/tmp/cxltest4.raw,size=256M,align=256M \
+   	-object memory-backend-file,id=cxl-lsa1,share=on,mem-path=/tmp/lsa.raw,size=1M,align=1M \
+   	-object memory-backend-file,id=cxl-lsa2,share=on,mem-path=/tmp/lsa2.raw,size=1M,align=1M \
+   	-object memory-backend-file,id=cxl-lsa3,share=on,mem-path=/tmp/lsa3.raw,size=1M,align=1M \
+   	-object memory-backend-file,id=cxl-lsa4,share=on,mem-path=/tmp/lsa4.raw,size=1M,align=1M \
+   	-object memory-backend-file,id=cxl-mem5,share=on,mem-path=/tmp/cxltest5.raw,size=256M,align=256M \
+   	-object memory-backend-file,id=cxl-mem6,share=on,mem-path=/tmp/cxltest6.raw,size=256M,align=256M \
+   	-object memory-backend-file,id=cxl-mem7,share=on,mem-path=/tmp/cxltest7.raw,size=256M,align=256M \
+   	-object memory-backend-file,id=cxl-mem8,share=on,mem-path=/tmp/cxltest8.raw,size=256M,align=256M \
+   	-object memory-backend-file,id=cxl-lsa5,share=on,mem-path=/tmp/lsa5.raw,size=1M,align=1M \
+   	-object memory-backend-file,id=cxl-lsa6,share=on,mem-path=/tmp/lsa6.raw,size=1M,align=1M \
+   	-object memory-backend-file,id=cxl-lsa7,share=on,mem-path=/tmp/lsa7.raw,size=1M,align=1M \
+   	-object memory-backend-file,id=cxl-lsa8,share=on,mem-path=/tmp/lsa8.raw,size=1M,align=1M \
+   	-device pxb-cxl,bus_nr=12,bus=pcie.0,id=cxl.1 \
+   	-device cxl-rp,port=0,bus=cxl.1,id=root_port0,chassis=0,slot=2 \
+   	-device cxl-rp,port=1,bus=cxl.1,id=root_port2,chassis=0,slot=3 \
+   	-device virtio-rng-pci,bus=root_port2 -device cxl-upstream,port=33,bus=root_port0,id=us0,multifunction=on,addr=0.0 \
+   	-device cxl-downstream,port=0,bus=us0,id=swport0,chassis=0,slot=4 \
+   	-device cxl-downstream,port=1,bus=us0,id=swport1,chassis=0,slot=5 \
+   	-device cxl-downstream,port=2,bus=us0,id=swport2,chassis=0,slot=6 \
+   	-device cxl-downstream,port=3,bus=us0,id=swport3,chassis=0,slot=7 \
+   	-device cxl-type3,bus=swport0,memdev=cxl-mem1,id=cxl-pmem0,lsa=cxl-lsa1,sn=3 \
+   	-device cxl-type3,bus=swport1,memdev=cxl-mem2,id=cxl-pmem1,lsa=cxl-lsa2,sn=4 \
+   	-device cxl-type3,bus=swport2,memdev=cxl-mem3,id=cxl-pmem2,lsa=cxl-lsa3,sn=5 \
+   	-device cxl-type3,bus=swport3,memdev=cxl-mem4,id=cxl-pmem3,lsa=cxl-lsa4,sn=6 \
+   	-machine cxl-fmw.0.targets.0=cxl.1,cxl-fmw.0.size=4G,cxl-fmw.0.interleave-granularity=1k \
+   	-machine ras=on
