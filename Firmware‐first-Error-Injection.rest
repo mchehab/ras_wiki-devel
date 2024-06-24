@@ -18,7 +18,7 @@ Each processor type has a different error event.
 Hardware error injection
 ========================
 
-Some machines can optionally do hardware/firmware error injection. This is usually done by setting up some special features at the BIOS level to enable EINJ features. Those are hardware-specific and may require special BIOS used on hardware development by OEM vendors.
+Some machines can optionally do firmware (and/or hardware) error injection. This is usually done by setting up some special features at the BIOS level to enable EINJ features. Those are hardware-specific and may require special BIOS used on hardware development by OEM vendors.
 
 Error injection using QEMU
 ==========================
