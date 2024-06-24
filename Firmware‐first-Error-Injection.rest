@@ -1,3 +1,20 @@
+UEFI CPER events
+================
+
+The UEFI BIOS spec defines Common Platform Error Record (CPER) events for the firmware to report errors from different kinds of hardware.
+
+CPER processor events
+---------------------
+
+Currently, UEFI 2.6+ BIOS supports 4 types of processors:
+
+- `Generic Processor <https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#generic-processor-error-section>`_;
+- `IA32/X64 processor (x86 architecture) <https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#ia32-x64-processor-error-section>`_;
+- `IA64 processor (Itanium) <https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#ia64-processor-error-section>`_;
+- `ARM processor <https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#arm-processor-error-section>`_.
+
+Each processor type has a different error event.
+
 Hardware error injection
 ========================
 
@@ -6,14 +23,7 @@ Some machines can optionally do hardware/firmware error injection. This is usual
 Error injection using QEMU
 ==========================
 
-Setting up an error injection environment on QEMU using firmware-first mode is not hard. Basically, it requires QMP support at QEMU level to do the error injection. Currently, UEFI 2.6+ BIOS supports 4 types of processors:
-
-- `Generic Processor <https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#generic-processor-error-section>`_;
-- `IA32/X64 processor (x86 architecture) <https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#ia32-x64-processor-error-section>`_;
-- `IA64 processor (Itanium) <https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#ia64-processor-error-section>`_;
-- `ARM processor <https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#arm-processor-error-section>`_.
-
-Each processor type has a different error event.
+Setting up an error injection environment on QEMU using firmware-first mode is not hard. Basically, it requires QMP support at QEMU level to do the error injection.
 
 ARM processor QEMU error injection
 ==================================
