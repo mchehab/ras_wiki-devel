@@ -9,6 +9,17 @@ There are several types of CPER events for different types of hardware:
 
    - N.2.4: `Processor <https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#processor-error-sections>`_
 
+     Currently, UEFI 2.6+ BIOS supports 4 types of processors:
+
+     - `Generic Processor <https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#generic-processor-error-section>`_;
+     - `IA32/X64 processor (x86 architecture) <https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#ia32-x64-processor-error-section>`_;
+     - `IA64 processor (Itanium) <https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#ia64-processor-error-section>`_;
+     - `ARM processor <https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#arm-processor-error-section>`_.
+
+     Each processor type has a different error event.
+
+     It be noticed that, while ARM was added on UEFI v 2.6, the encoding of the error type was only specified on UEFI 2.9A errata.
+
 #. Memory:
 
    - N.2.5: `Memory error <https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#memory-error-section>`_
@@ -40,18 +51,3 @@ There are several types of CPER events for different types of hardware:
 
    - N.2.3: `Non-standard <https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#non-standard-section-body>`_.
 
-CPER processor error
---------------------
-
-Defined at `Processor Error Sections <https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#processor-error-sections`_.
-
-Currently, UEFI 2.6+ BIOS supports 4 types of processors:
-
-- `Generic Processor <https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#generic-processor-error-section>`_;
-- `IA32/X64 processor (x86 architecture) <https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#ia32-x64-processor-error-section>`_;
-- `IA64 processor (Itanium) <https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#ia64-processor-error-section>`_;
-- `ARM processor <https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#arm-processor-error-section>`_.
-
-Each processor type has a different error event.
-
-It should be noticed that ARM events were added on UEFI version 2.6. Yet, one of the fields there was lacking encoding information. Such encoding info was added on UEFI 2.9A errata.
