@@ -1,7 +1,7 @@
 UEFI CPER events
 ================
 
-The UEFI BIOS spec defines Common Platform Error Record (CPER) events for the firmware to report errors from different kinds of hardware.
+The UEFI BIOS spec defines Common Platform Error Record (CPER) for the firmware to report errors from different kinds of hardware.
 
 There are several types of CPER events for different types of hardware:
 
