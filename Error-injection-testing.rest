@@ -86,3 +86,59 @@ Executing QEMU can be done with::
    	-device cxl-type3,bus=swport3,memdev=cxl-mem4,id=cxl-pmem3,lsa=cxl-lsa4,sn=6 \
    	-machine cxl-fmw.0.targets.0=cxl.1,cxl-fmw.0.size=4G,cxl-fmw.0.interleave-granularity=1k \
    	-machine ras=on
+
+ARM error injection
+-------------------
+
+The error injection is done by running this small script::
+
+   #!/bin/bash
+   
+   trap 'catch $LINENO "$BASH_COMMAND"' ERR
+   catch() {
+   	echo "Error on line $1: $2"
+   	exit 1
+   }
+   
+   ERROR_DEFAULT='"cache-error"'
+   ERROR=""
+   
+   HELP="$0 [<-c|--cache-error> <-t|--tlb-error> <-b|--bus-error> <-v|--vendor-error>|--micro-arch-error]"
+   
+   while [ "$1" != "" ]; do
+   	case "$1" in
+   		-c|--cache-error)
+   			if [ ! -z "$ERROR" ]; then ERROR="$ERROR, "; fi
+   			ERROR+='"cache-error"'
+   			;;
+   		-t|--tlb-error)
+   			if [ ! -z "$ERROR" ]; then ERROR="$ERROR, "; fi
+   			ERROR+='"tlb-error"'
+   			;;
+   		-b|--bus-error)
+   			if [ ! -z "$ERROR" ]; then ERROR="$ERROR, "; fi
+   			ERROR+='"bus-error"'
+   			;;
+   		-v|--vendor-error|--micro-arch-error)
+   			if [ ! -z "$ERROR" ]; then ERROR="$ERROR, "; fi
+   			ERROR+='"micro-arch-error"'
+   			;;
+   		help|-h|--help)
+   			echo $HELP
+   			exit 0
+   			;;
+   	esac
+   	shift
+   done
+   
+   
+   if [ -z "$ERROR" ]; then
+   	ERROR=$ERROR_DEFAULT
+   fi
+   
+   CACHE_MSG='{ "execute": "qmp_capabilities" } '
+   CACHE_MSG+='{ "execute": "arm-inject-error", "arguments": { "errortypes": ['$ERROR'] } }'
+   
+   echo $CACHE_MSG
+   echo $CACHE_MSG | nc -v localhost 4445
+   
