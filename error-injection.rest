@@ -6,8 +6,8 @@ Setting up an error injection environment on QEMU using firmware-first mode is n
 ARM processor QEMU error injection
 ==================================
 
-There's a QEMU patch adding support for error-injection at: 
-https://lore.kernel.org/all/20240621165115.336-1-shiju.jose@huawei.com/
+There's a QEMU series adding support for error-injection at: 
+https://lore.kernel.org/qemu-devel/20240628090605.529-1-shiju.jose@huawei.com/T/#t
 
 Compiling QEMU with such patch on it adds a QMP extension to error injection compatible with UAPI 2.9A errata.
 Such patch should be applied at QEMU git tree. Both QEMU and UEFI firmware should be build from QEMU and EK2 trees.
