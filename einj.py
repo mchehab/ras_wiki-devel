@@ -91,23 +91,65 @@ def get_choice(name, value, choices, suffixes=None):
 
     return new_values
 
-def get_pei_choices(pei, name, values, choices, suffixes=None):
-    if not values:
-        return
+def get_mult_array(mult, name, values, allow_zero=False):
+    if not allow_zero:
+        if not values:
+            return
+    else:
+        if values is None:
+            return
+        elif not values:
+            i = 0
+            if i not in mult:
+                mult[i] = {}
+
+            mult[i][name]=[]
+            return
+
+    i = 0
+    for value in values:
+        for val in value.split(","):
+            try:
+                val = int(val, 0)
+            except:
+                sys.exit(f"Error on '{name}': {val} is not an integer")
+
+            if i not in mult:
+                mult[i] = {}
+
+            if name not in mult[i]:
+                mult[i][name] = []
+
+            mult[i][name].append(val)
+
+        i += 1
+
+def get_mult_choices(mult, name, values, choices,
+                     suffixes = None, allow_zero=False):
+    if not allow_zero:
+        if not values:
+            return
+    else:
+        if values is None:
+            return
 
     i = 0
     for val in values:
         new_values = get_choice(name, val, choices, suffixes)
 
-        if i not in pei:
-            pei[i] = {}
+        if i not in mult:
+            mult[i] = {}
 
-        pei[i][name] = new_values
+        mult[i][name] = new_values
         i += 1
 
-def get_pei_int(pei, name, values):
-    if not values:
-        return
+def get_mult_int(mult, name, values, allow_zero=False):
+    if not allow_zero:
+        if not values:
+            return
+    else:
+        if values is None:
+            return
 
     i = 0
     for val in values:
@@ -116,12 +158,11 @@ def get_pei_int(pei, name, values):
         except:
             sys.exit(f"Error on '{name}': {val} is not an integer")
 
-        if i not in pei:
-            pei[i] = {}
+        if i not in mult:
+            mult[i] = {}
 
-        pei[i][name] = val
+        mult[i][name] = val
         i += 1
-
 
 class errorInjection:
     def __init__(self, args=None, arm=None):
@@ -138,7 +179,10 @@ class errorInjection:
             self.args = args
             return
 
+        print("ARGS:", args)
+
         pei = {}
+        ctx = {}
 
         # Handle global parameters
         if args.arm:
@@ -169,23 +213,37 @@ class errorInjection:
         if not args.type:
             args.type = ['cache-error']
 
-        get_pei_choices(pei, name="validation", values=args.pei_valid,
+        get_mult_choices(pei, name="validation", values=args.pei_valid,
                         choices=PEI_valid_bits,
                         suffixes=["-valid", "-info", "--information", "--addr"])
-        get_pei_choices(pei, name="type", values=args.type,
+        get_mult_choices(pei, name="type", values=args.type,
                         choices=PEI_error_types,
                         suffixes=["-error", "-err"])
-        get_pei_choices(pei, name="flags", values=args.flags,
+        get_mult_choices(pei, name="flags", values=args.flags,
                         choices=PEI_flags,
                         suffixes=["-error", "-cap"])
-        get_pei_int(pei, "multiple-error", args.multiple_error)
-        get_pei_int(pei, "phy-addr", args.physical_address)
-        get_pei_int(pei, "vir-addr", args.virtual_address)
+        get_mult_int(pei, "multiple-error", args.multiple_error)
+        get_mult_int(pei, "phy-addr", args.physical_address)
+        get_mult_int(pei, "vir-addr", args.virtual_address)
+
+        # Handle context
+        get_mult_int(ctx, "type", args.ctx_type, allow_zero=True)
+        get_mult_int(ctx, "minimal-size", args.ctx_size, allow_zero=True)
+        get_mult_array(ctx, "register", args.ctx_array, allow_zero=True)
 
         # Store PEI
         self.arm["error"] = []
         for k in sorted(pei.keys()):
             self.arm["error"].append(pei[k])
+
+        # Store Context
+        if ctx:
+            self.arm["context"] = []
+            for k in sorted(ctx.keys()):
+                self.arm["context"].append(ctx[k])
+
+        print("PEI:", pei)
+        print("CTX:", ctx)
 
     def run(self, host, port):
 
@@ -232,7 +290,7 @@ def handle_args():
     g_arm.add_argument("--psci", "--psci-state", type=lambda x: int(x, 0),
                        help="Power State Coordination Interface - PSCI state")
 
-    # TODO: Add context and vendor-specific support
+    # TODO: Add vendor-specific support
 
     # UEFI N.17 bitmaps (type and flags)
     g_pei = parser.add_argument_group("ARM Processor Error Info (PEI)")
@@ -251,6 +309,14 @@ def handle_args():
     g_pei.add_argument("-p", "--physical-address",  nargs="+",
                        help="Physical address")
     g_pei.add_argument("-v", "--virtual-address",  nargs="+",
+                       help="Virtual address")
+
+    # UEFI N.21 Context
+    g_pei.add_argument("--ctx-type", "--context-type", nargs="*",
+                       help="Virtual address")
+    g_pei.add_argument("--ctx-size", "--context-size", nargs="*",
+                       help="Virtual address")
+    g_pei.add_argument("--ctx-array", "--context-array", nargs="*",
                        help="Virtual address")
 
     return parser.parse_args()
