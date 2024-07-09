@@ -91,7 +91,7 @@ def get_choice(name, value, choices, suffixes=None):
 
     return new_values
 
-def get_mult_array(mult, name, values, allow_zero=False):
+def get_mult_array(mult, name, values, allow_zero=False, max_val=None):
     if not allow_zero:
         if not values:
             return
@@ -113,6 +113,12 @@ def get_mult_array(mult, name, values, allow_zero=False):
                 val = int(val, 0)
             except:
                 sys.exit(f"Error on '{name}': {val} is not an integer")
+
+            if val < 0:
+                sys.exit(f"Error on '{name}': {val} is not unsigned")
+
+            if max_val and val > max_val:
+                sys.exit(f"Error on '{name}': {val} is too big")
 
             if i not in mult:
                 mult[i] = {}
@@ -158,6 +164,9 @@ def get_mult_int(mult, name, values, allow_zero=False):
         except:
             sys.exit(f"Error on '{name}': {val} is not an integer")
 
+        if val < 0:
+            sys.exit(f"Error on '{name}': {val} is not unsigned")
+
         if i not in mult:
             mult[i] = {}
 
@@ -183,6 +192,7 @@ class errorInjection:
 
         pei = {}
         ctx = {}
+        vendor = {}
 
         # Handle global parameters
         if args.arm:
@@ -231,6 +241,8 @@ class errorInjection:
         get_mult_int(ctx, "minimal-size", args.ctx_size, allow_zero=True)
         get_mult_array(ctx, "register", args.ctx_array, allow_zero=True)
 
+        get_mult_array(vendor, "bytes", args.vendor, max_val=255)
+
         # Store PEI
         self.arm["error"] = []
         for k in sorted(pei.keys()):
@@ -242,8 +254,11 @@ class errorInjection:
             for k in sorted(ctx.keys()):
                 self.arm["context"].append(ctx[k])
 
-        print("PEI:", pei)
-        print("CTX:", ctx)
+        # Vendor-specific bytes are not grouped
+        if vendor:
+            self.arm["vendor-specific"] = []
+            for k in sorted(vendor.keys()):
+                self.arm["vendor-specific"] += vendor[k]["bytes"]
 
     def run(self, host, port):
 
@@ -313,11 +328,15 @@ def handle_args():
 
     # UEFI N.21 Context
     g_pei.add_argument("--ctx-type", "--context-type", nargs="*",
-                       help="Virtual address")
+                       help="Type of the context (0=ARM32 GPR, 5=ARM64 EL1, other values supported)")
     g_pei.add_argument("--ctx-size", "--context-size", nargs="*",
-                       help="Virtual address")
+                       help="Minimal size of the context")
     g_pei.add_argument("--ctx-array", "--context-array", nargs="*",
-                       help="Virtual address")
+                       help="Comma-separated arrays for each context")
+
+    # Vendor-specific data
+    g_pei.add_argument("--vendor", "--vendor-specific", nargs="+",
+                       help="Vendor-specific byte arrays of data")
 
     return parser.parse_args()
 
